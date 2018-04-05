@@ -1,0 +1,11 @@
+{
+  "name": "nttweetservice",
+  "version": "1.0.0",
+  "description": "Tweet service of NanoTwitter",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Akiba Sato, Kevin Wang, Meg Kobashi",
+  "license": "ISC"
+}
