@@ -67,20 +67,15 @@ module.exports.like = async (req, res) => {
 };
 
 // Example return JSON:
-// [{
-//  "createdAt": "2018-03-11T07:56:36.176Z",
-//  "user": {
-//    "fullName" : "Bob Builder"
-//    "username": "bob_builder"
-//  }
-// },
-// {
-//  "createdAt": "2018-03-11T07:56:36.176Z",
-//  "user": {
-//    "fullName" : "Dona Explorer"
-//    "username": "dora_explorer"
-//  }
-// }]
+// [
+//     {
+//         "createdAt": "2018-04-06T03:10:04.011Z",
+//         "user": {
+//             "fullName": "yoyo yoyo",
+//             "username": "yoyo"
+//         }
+//     }
+// ]
 module.exports.getLikes = async (req, res) => {
   var id = req.query.id
 
@@ -118,20 +113,15 @@ module.exports.retweet = async (req, res) => {
 };
 
 // Example return JSON:
-// [{
-//  "createdAt": "2018-03-11T07:56:36.176Z",
-//  "user": {
-//    "fullName" : "Bob Builder"
-//    "username": "bob_builder"
-//  }
-// },
-// {
-//  "createdAt": "2018-03-11T07:56:36.176Z",
-//  "user": {
-//    "fullName" : "Dora explorer"
-//    "username": "dora_explorer"
-//  }
-// }]
+// [
+//     {
+//         "createdAt": "2018-04-06T03:10:04.011Z",
+//         "user": {
+//             "fullName": "yoyo yoyo",
+//             "username": "yoyo"
+//         }
+//     }
+// ]
 module.exports.getRetweets = async (req, res) => {
   var id = req.query.id
 
@@ -141,7 +131,7 @@ module.exports.getRetweets = async (req, res) => {
       include: [{
         model: models.User,
         as: 'user',
-        attributes: ['username']
+        attributes: ['username', 'fname', 'lname']
       }],
       attributes: ['createdAt']
     });
