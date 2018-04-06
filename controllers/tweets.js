@@ -3,18 +3,18 @@ var sequelize = require('sequelize');
 
 // TODO: Parse tweet content in background and insert into Hashtag and Mention.
 module.exports.tweet =  async (req, res) => {
-  res.status(200).send('success');
-
   try {
+    res.status(200).send('success');
+
     await models.Tweet.create({
-        content: req.query.content,
-        userId: req.query.id,
-        parentId: req.query.parentId
+        content: req.body.content,
+        userId: req.body.userId,
+        parentId: req.body.parentId
     });
 
     await models.User.update(
         { numTweets: sequelize.literal(`"Users"."numTweets" + 1`) },
-        { where: { id: req.query.id }
+        { where: { id: req.body.id }
     });
 
   } catch (err) {
@@ -32,9 +32,9 @@ module.exports.tweet =  async (req, res) => {
 //     }
 // }
 module.exports.getTweet =  async (req, res) => {
-  var id = req.query.id
-
   try {
+    var id = req.body.id;
+
     var tweet = await models.Tweet.findOne({
       where: { id: id },
       include: [{
@@ -53,9 +53,9 @@ module.exports.getTweet =  async (req, res) => {
 };
 
 module.exports.like = async (req, res) => {
-  res.status(200).send('success');
-
   try {
+    res.status(200).send('success');
+
     await models.Like.create({
       userId: req.query.userId,
       tweetId: req.query.tweetId
@@ -77,9 +77,9 @@ module.exports.like = async (req, res) => {
 //     }
 // ]
 module.exports.getLikes = async (req, res) => {
-  var id = req.query.id
-
   try {
+    var id = req.body.id;
+
     var users = await models.Like.findAll({
       where: { tweetId: id },
       include: [{
@@ -93,14 +93,14 @@ module.exports.getLikes = async (req, res) => {
     res.json(JSON.parse(JSON.stringify(users)));
 
   } catch (err) {
-    res.status(404).send(err);
+
   }
 };
 
 module.exports.retweet = async (req, res) => {
-  res.status(200).send('success');
-
   try {
+    res.status(200).send('success');
+
     await models.Tweet.create({
         content: "",
         userId: req.query.userId,
@@ -123,11 +123,11 @@ module.exports.retweet = async (req, res) => {
 //     }
 // ]
 module.exports.getRetweets = async (req, res) => {
-  var id = req.query.id
-
   try {
+    var id = req.body.id;
+
     var users = await models.Tweet.findAll({
-      where: { originalId: req.query.id },
+      where: { originalId: id},
       include: [{
         model: models.User,
         as: 'user',
