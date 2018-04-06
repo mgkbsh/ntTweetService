@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "",
+    "password": "",
+    "database": "ntdev",
+    "host": "localhost",
+    "dialect": "postgres",
+    "user_service": "http://localhost:1234/"
+  },
+  "production": {
+    "use_env_variable": "DATABASE_URL",
+    "dialect": "postgres",
+    "user_service": "https://ntusers-tjak.herokuapp.com/"
+  },
+  "test": {
+    "username": "",
+    "password": "",
+    "database": "nttest",
+    "host": "localhost",
+    "dialect": "postgres",
+    "logging": false
+  }
+}
