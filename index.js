@@ -22,7 +22,6 @@ router.get('/likes', tweets.getLikes);
 router.post('/like', tweets.like);
 router.get('/retweets', tweets.getRetweets);
 router.post('/retweet', tweets.retweet);
-router.get('/timeline/original', timeline.getOriginalTimeline);
 router.get('/timeline/followees', timeline.getFolloweeTimeline);
 router.get('/timeline/global', timeline.getGlobalTimeline);
 router.get('/timeline/user', timeline.getUserTimeline);

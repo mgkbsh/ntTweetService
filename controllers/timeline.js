@@ -1,36 +1,6 @@
 var models  = require('../models');
 var sequelize = require('sequelize');
 
-// Get the tweets from the user, excluding retweets.
-// Example return JSON:
-// [
-//     {
-//         "content": "hi",
-//         "createdAt": "2018-04-06T03:09:38.593Z"
-//     },
-//     {
-//         "content": "yo",
-//         "createdAt": "2018-04-05T19:44:10.242Z"
-//     }
-// ]
-module.exports.getOriginalTimeline =  async (req, res) => {
-  try {
-    var id = req.body.id;
-
-    var tweets = await models.Tweet.findAll({
-      order: [['createdAt', 'DESC']],
-      limit: 50,
-      where: { userId: id, originalId: null },
-      attributes: ['content', 'createdAt']
-    });
-
-    res.json(JSON.parse(JSON.stringify(tweets)));
-
-  } catch (err) {
-    res.status(404).send(err);
-  }
-};
-
 // Get the tweets from the user, including retweets.
 // Example return JSON:
 // [
@@ -53,12 +23,7 @@ module.exports.getUserTimeline = async (req, res) => {
       order: [['createdAt', 'DESC']],
       limit: 50,
       where: { userId: id },
-      include: [{
-        model: models.User,
-        as: 'user',
-        attributes: ['id', 'username']
-      }],
-      attributes: ['id','content', 'createdAt']
+      attributes: ['id', 'content', 'createdAt', 'originalId']
     });
 
     res.json(JSON.parse(JSON.stringify(tweets)));
