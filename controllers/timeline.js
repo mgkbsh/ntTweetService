@@ -68,7 +68,7 @@ module.exports.getFolloweeTimeline = async (req, res) => {
         }
       }],
       required: true,
-      attributes: ['content', 'createdAt']
+      attributes: ['id', 'content', 'createdAt', 'originalId']
     });
 
     res.json(JSON.parse(JSON.stringify(tweets)));
@@ -104,8 +104,10 @@ module.exports.getGlobalTimeline = async (req, res) => {
         as: 'user',
         attributes: ['id', 'username', 'fname', 'lname']
       }],
-      attributes: ['content', 'createdAt']
+      attributes: ['id', 'content', 'createdAt', 'originalId']
     });
+
+    console.log(JSON.parse(JSON.stringify(tweets)));
 
     res.json(JSON.parse(JSON.stringify(tweets)));
 

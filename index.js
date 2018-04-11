@@ -20,6 +20,7 @@ router.get('/tweet', tweets.getTweet);
 router.post('/tweet', tweets.tweet);
 router.get('/likes', tweets.getLikes);
 router.post('/like', tweets.like);
+router.post('/unlike', tweets.unlike);
 router.get('/retweets', tweets.getRetweets);
 router.post('/retweet', tweets.retweet);
 router.get('/timeline/followees', timeline.getFolloweeTimeline);

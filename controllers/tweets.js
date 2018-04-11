@@ -57,14 +57,28 @@ module.exports.like = async (req, res) => {
     res.status(200).send('success');
 
     await models.Like.create({
-      userId: req.query.userId,
-      tweetId: req.query.tweetId
+      userId: req.body.userId,
+      tweetId: req.body.tweetId
     })
 
   } catch (err) {
 
   }
 };
+
+module.exports.unlike = async (req, res) => {
+  try {
+    res.status(200).send('success');
+
+    await models.Like.destroy({
+      userId: req.body.userId,
+      tweetId: req.body.tweetId
+    })
+  } catch (err) {
+
+  }
+};
+
 
 // Example return JSON:
 // [
@@ -103,8 +117,8 @@ module.exports.retweet = async (req, res) => {
 
     await models.Tweet.create({
         content: "",
-        userId: req.query.userId,
-        originalId: req.query.tweetId
+        userId: req.body.userId,
+        originalId: req.body.tweetId
     })
 
   } catch (err) {
