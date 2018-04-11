@@ -23,6 +23,11 @@ module.exports.getUserTimeline = async (req, res) => {
       order: [['createdAt', 'DESC']],
       limit: 50,
       where: { userId: id },
+      include: [{
+        model: models.User,
+        as: 'user',
+        attributes: ['id', 'username', 'fname', 'lname']
+      }],
       attributes: ['id', 'content', 'createdAt', 'originalId']
     });
 
@@ -106,8 +111,6 @@ module.exports.getGlobalTimeline = async (req, res) => {
       }],
       attributes: ['id', 'content', 'createdAt', 'originalId']
     });
-
-    console.log(JSON.parse(JSON.stringify(tweets)));
 
     res.json(JSON.parse(JSON.stringify(tweets)));
 
