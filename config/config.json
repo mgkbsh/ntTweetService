@@ -5,7 +5,8 @@
     "database": "ntdev",
     "host": "localhost",
     "dialect": "postgres",
-    "user_service": "http://localhost:1234/"
+    "user_service": "http://localhost:1234/",
+    "cache_service": "http://localhost:2000/"
   },
   "production": {
     "use_env_variable": "DATABASE_URL",

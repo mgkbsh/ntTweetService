@@ -14,7 +14,7 @@ module.exports.tweet =  async (req, res) => {
 
     await models.User.update(
         { numTweets: sequelize.literal(`"Users"."numTweets" + 1`) },
-        { where: { id: req.body.id }
+        { where: { id: req.body.userId }
     });
 
   } catch (err) {
