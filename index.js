@@ -13,10 +13,10 @@ app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 
 /* =============ROUTES============= */
-const tweets = require('./controllers/tweets')
-const timeline = require('./controllers/timeline')
+// const tweets = require('./controllers/tweets')
+// const timeline = require('./controllers/timeline')
 const router = express.Router();
-// 
+//
 // router.get('/tweet', tweets.getTweet);
 // router.post('/tweet', tweets.tweet);
 // router.get('/likes', tweets.getLikes);
