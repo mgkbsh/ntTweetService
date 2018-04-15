@@ -1,8 +1,9 @@
 var models  = require('../models');
 var sequelize = require('sequelize');
 var axios = require('axios')
-var cacheURL = "http://localhost:2000/"
-
+var env = process.env.NODE_ENV || 'development';
+var config = require('../config/config.json')[env]
+var cacheURL = config.cache_service
 
 // Get the tweets from the user, excluding retweets.
 // Example return JSON:
