@@ -64,7 +64,7 @@ module.exports.getUserTimeline = async (req, res) => {
   console.log("USER TIMELINE")
   try {
     console.log("WOWOWOWO")
-    var id = req.body.id;
+    var id =5;
     var userCacheKey="userTimeLine"+id.toString();
     var getRequestURL=cacheURL+userCacheKey
     var postURL=cacheURL+'store/'+userCacheKey
@@ -82,7 +82,6 @@ module.exports.getUserTimeline = async (req, res) => {
             }],
             attributes: ['id', 'originalId', 'content', 'createdAt']
           })
-          console.log(tweets)
           res.json(tweets);
           axios.post(postURL, {params: { cacheKey: userCacheKey, cacheData: JSON.stringify(tweets)}})
     } else {
