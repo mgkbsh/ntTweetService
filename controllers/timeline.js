@@ -1,7 +1,7 @@
 var models  = require('../models');
 var sequelize = require('sequelize');
 var axios = require('axios')
-var env = process.env.NODE_ENV || 'production';
+var env = process.env.NODE_ENV || 'development';
 var config = require('../config/config.json')[env]
 var cacheURL = config.cache_service
 
