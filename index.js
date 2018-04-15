@@ -28,5 +28,7 @@ router.get('/timeline/global', timeline.getGlobalTimeline);
 router.get('/timeline/user', timeline.getUserTimeline);
 
 app.use('/', router);
-
+app.get('/',function(req, res, next){
+  res.json({"test":"test"})
+})
 app.listen(port);
