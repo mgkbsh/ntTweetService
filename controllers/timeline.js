@@ -63,6 +63,7 @@ module.exports.getOriginalTimeline =  async (req, res) => {
 module.exports.getUserTimeline = async (req, res) => {
   console.log("USER TIMELINE")
   try {
+    console.log("WOWOWOWO")
     var id = req.body.id;
     var userCacheKey="userTimeLine"+id.toString();
     var getRequestURL=cacheURL+userCacheKey
@@ -88,6 +89,7 @@ module.exports.getUserTimeline = async (req, res) => {
       res.json(JSON.parse(result));
     }
   } catch (err) {
+    console.log(err)
     res.status(404).send(err);
   }
 }
