@@ -20,6 +20,7 @@ var cacheURL = config.cache_service
 module.exports.getOriginalTimeline =  async (req, res) => {
   console.log("ORIGINAL TIMELINE")
   try {
+    console.log(cacheURL)
     var id = req.body.id;
     var userCacheKey="originalTimline"+id.toString();
     var getRequestURL=cacheURL+userCacheKey
@@ -33,7 +34,7 @@ module.exports.getOriginalTimeline =  async (req, res) => {
             where: { userId: id, originalId: null },
             attributes: ['content', 'createdAt']
           });
-          res.json(tweets);
+          res.json(JSON.parse(JSON.stringify(tweets)));
           axios.post(postURL, {params: { cacheKey: userCacheKey, cacheData: JSON.stringify(tweets)}})
     } else {
       res.json(JSON.parse(result));
@@ -76,10 +77,11 @@ module.exports.getUserTimeline = async (req, res) => {
             include: [{
               model: models.User,
               as: 'user',
-              attributes: ['id', 'username']
+              attributes: ['fname', 'lname', 'username']
             }],
-            attributes: ['id','content', 'createdAt']
-          });
+            attributes: ['id', 'originalId', 'content', 'createdAt']
+          })
+          console.log(tweets)
           res.json(tweets);
           axios.post(postURL, {params: { cacheKey: userCacheKey, cacheData: JSON.stringify(tweets)}})
     } else {
@@ -178,7 +180,7 @@ module.exports.getGlobalTimeline = async (req, res) => {
           as: 'user',
           attributes: ['id', 'username', 'fname', 'lname']
         }],
-        attributes: ['content', 'createdAt']
+        attributes: ['id', 'content', 'originalId', 'createdAt']
       });
       res.json(tweets);
       axios.post(postURL, {params: { cacheKey: userCacheKey, cacheData: JSON.stringify(tweets)}})
