@@ -16,20 +16,20 @@ app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 const tweets = require('./controllers/tweets')
 const timeline = require('./controllers/timeline')
 const router = express.Router();
-//
-// router.get('/tweet', tweets.getTweet);
-// router.post('/tweet', tweets.tweet);
-// router.get('/likes', tweets.getLikes);
-// router.post('/like', tweets.like);
-// router.post('/unlike', tweets.unlike);
-// router.get('/retweets', tweets.getRetweets);
-// router.post('/retweet', tweets.retweet);
-// router.get('/timeline/followees', timeline.getFolloweeTimeline);
-// router.get('/timeline/global', timeline.getGlobalTimeline);
-// router.get('/timeline/user', timeline.getUserTimeline);
-//
-// app.use('/', router);
-app.get('/',function(req, res, next){
+
+router.get('/tweet', tweets.getTweet);
+router.post('/tweet', tweets.tweet);
+router.get('/likes', tweets.getLikes);
+router.post('/like', tweets.like);
+router.post('/unlike', tweets.unlike);
+router.get('/retweets', tweets.getRetweets);
+router.post('/retweet', tweets.retweet);
+router.get('/timeline/followees', timeline.getFolloweeTimeline);
+router.get('/timeline/global', timeline.getGlobalTimeline);
+router.get('/timeline/user', timeline.getUserTimeline);
+router.get('/test',function(req, res, next){
   res.json({"test":"test"})
 })
+app.use('/', router);
+
 app.listen(port);
