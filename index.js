@@ -1,4 +1,7 @@
-require('newrelic')
+var env = process.env.NODE_ENV || 'development';
+if(env=="production") {
+  require('newrelic')
+}
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 4567;
