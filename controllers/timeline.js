@@ -165,20 +165,20 @@ module.exports.getFolloweeTimeline = async (req, res) => {
 // TODO: Retrieve global timeline from Redis.
 module.exports.getGlobalTimeline = async (req, res) => {
   try {
-    // var tweets = await models.Tweet.findAll({
-    //   order: [['createdAt', 'DESC']],
-    //   limit: 50,
-    //   include: [{
-    //     model: models.User,
-    //     as: 'user',
-    //     attributes: ['id', 'username', 'fname', 'lname']
-    //   }],
-    //   attributes: ['id', 'content', 'createdAt', 'originalId']
-    // });
+    var tweets = await models.Tweet.findAll({
+      order: [['createdAt', 'DESC']],
+      limit: 50,
+      include: [{
+        model: models.User,
+        as: 'user',
+        attributes: ['id', 'username', 'fname', 'lname']
+      }],
+      attributes: ['id', 'content', 'createdAt', 'originalId']
+    });
 
-    res.json({})
+    // res.json({})
 
-    // res.json(JSON.parse(JSON.stringify(tweets)));
+    res.json(JSON.parse(JSON.stringify(tweets)));
 
   } catch (err) {
     res.status(404).send(err);
