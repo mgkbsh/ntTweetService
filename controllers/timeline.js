@@ -8,7 +8,7 @@ var cacheURL = config.cache_service
 // Get the tweets from the user, excluding retweets.
 // Example return JSON:
 // [
-//     {a
+//     {
 //         "content": "hi",
 //         "createdAt": "2018-04-06T03:09:38.593Z"
 //     },
@@ -164,31 +164,22 @@ module.exports.getFolloweeTimeline = async (req, res) => {
 //   ]
 // TODO: Retrieve global timeline from Redis.
 module.exports.getGlobalTimeline = async (req, res) => {
-  console.log("GLOBAL TIMELINE")
-
   try {
-    var userCacheKey="globalTimline";
-    var getRequestURL=cacheURL+userCacheKey
-    var postURL=cacheURL+'store/'+userCacheKey
-    var response=await axios.get(getRequestURL);
-    var result=JSON.parse(JSON.stringify(response.data))
-    if(result==null) {
-      var tweets = await models.Tweet.findAll({
-        order: [['createdAt', 'DESC']],
-        limit: 50,
-        include: [{
-          model: models.User,
-          as: 'user',
-          attributes: ['id', 'username', 'fname', 'lname']
-        }],
-        attributes: ['id', 'content', 'originalId', 'createdAt']
-      });
-      res.json(tweets);
-      axios.post(postURL, {params: { cacheKey: userCacheKey, cacheData: JSON.stringify(tweets)}})
+    console.log("HITTING")
+    // var tweets = await models.Tweet.findAll({
+    //   order: [['createdAt', 'DESC']],
+    //   limit: 50,
+    //   include: [{
+    //     model: models.User,
+    //     as: 'user',
+    //     attributes: ['id', 'username', 'fname', 'lname']
+    //   }],
+    //   attributes: ['id', 'content', 'createdAt', 'originalId']
+    // });
+    res.json({});
 
-    } else {
-      res.json(JSON.parse(result))
-    }
+    // res.json(JSON.parse(JSON.stringify(tweets)));
+
   } catch (err) {
     res.status(404).send(err);
   }
