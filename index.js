@@ -1,6 +1,18 @@
+require('newrelic')
+
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 4567;
+
+
+
+  var https = require('https');
+  https.globalAgent.maxSockets = Infinity;
+  app.https=https
+
+  var http = require('http');
+  http.globalAgent.maxSockets = Infinity;
+  app.http=http
 
 /* ===========BODY_PARSER=========== */
 const bodyParser = require('body-parser');
@@ -26,7 +38,9 @@ router.post('/retweet', tweets.retweet);
 router.get('/timeline/followees', timeline.getFolloweeTimeline);
 router.get('/timeline/global', timeline.getGlobalTimeline);
 router.get('/timeline/user', timeline.getUserTimeline);
-
+router.get('/test',function(req, res, next){
+  res.json({"test":"test"})
+})
 app.use('/', router);
 
 app.listen(port);

@@ -11,7 +11,8 @@
   "production": {
     "use_env_variable": "DATABASE_URL",
     "dialect": "postgres",
-    "user_service": "https://ntusers-tjak.herokuapp.com/"
+    "user_service": "https://ntusers-tjak.herokuapp.com/",
+    "cache_service": "https://nt-cache.herokuapp.com/"
   },
   "test": {
     "username": "",
