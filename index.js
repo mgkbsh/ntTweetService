@@ -3,7 +3,18 @@ require('newrelic')
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 4567;
+const WORKERS = process.env.WEB_CONCURRENCY || 1;
+const cluster = require('cluster');
 
+// Code to run if we're in the master process
+if (cluster.isMaster) {
+  // Create a worker for each WORKERS
+  for (var i = 0; i < WORKERS; i += 1) {
+    console.log("Spawning workers")
+    cluster.fork();
+  }
+  // Code to run if we're in a worker process
+} else {
 
 
   var https = require('https');
@@ -44,3 +55,4 @@ router.get('/test',function(req, res, next){
 app.use('/', router);
 
 app.listen(port);
+}
