@@ -3,13 +3,16 @@ require('newrelic')
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 4567;
-var https = require('https');
-https.globalAgent.maxSockets = Infinity;
-app.https=http
 
-var http = require('http');
-https.globalAgent.maxSockets = Infinity;
-app.http=http
+
+
+  var https = require('https');
+  https.globalAgent.maxSockets = Infinity;
+  app.https=https
+
+  var http = require('http');
+  http.globalAgent.maxSockets = Infinity;
+  app.http=http
 
 /* ===========BODY_PARSER=========== */
 const bodyParser = require('body-parser');
