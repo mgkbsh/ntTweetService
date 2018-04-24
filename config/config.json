@@ -6,23 +6,13 @@
     "host": "localhost",
     "dialect": "postgres",
     "user_service": "http://localhost:1234/",
-    "cache_service": "http://localhost:2000/",
-    "pool": {
-      "max": 10,
-      "min": 0,
-      "idle": 1000
-    }
+    "cache_service": "http://localhost:2000/"
   },
   "production": {
     "use_env_variable": "DATABASE_URL",
     "dialect": "postgres",
     "user_service": "https://ntusers-tjak.herokuapp.com/",
-    "cache_service": "https://nt-cache.herokuapp.com/",
-    "pool": {
-      "max": 10,
-      "min": 0,
-      "idle": 1000
-    }
+    "cache_service": "https://nt-cache.herokuapp.com/"
   },
   "test": {
     "username": "",
