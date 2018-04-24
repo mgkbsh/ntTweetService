@@ -9,21 +9,28 @@ module.exports.tweet =  async (req, res) => {
 
     var user = req.body.user;
 
-    models.User.update(
-        { numTweets: sequelize.literal(`"Users"."numTweets" + 1`) },
-        { where: { id: user.id }
-    });
 
-    var tweet = await models.Tweet.create({
+    // var tweet = await models.Tweet.create({
+    //     content: req.body.content,
+    //     userId: user.id,
+    //     parentId: req.body.parentId,
+    //     updatedAt: new Date(Date.parse(new Date())),
+    //     createdAt: new Date(Date.parse(new Date()))
+    // });
+    //
+    // console.log(tweet)
+
+    var tweet = {
         content: req.body.content,
         userId: user.id,
-        parentId: req.body.parentId
-    });
+        parentId: req.body.parentId,
+        updatedAt: new Date(Date.parse(new Date())),
+        createdAt: new Date(Date.parse(new Date())),
+    }
 
-    tweet = JSON.parse(JSON.stringify(tweet))
+    client.lpushAsync('writer', JSON.stringify(tweet))
     tweet.user = user
-    string = JSON.stringify(tweet)
-
+    var string = JSON.stringify(tweet)
     await client.lpushAsync('userTimeline:' + user.id, string)
     await client.lpushAsync('globalTimeline', string)
     client.ltrim('userTimeline' + user.id, 0, 49)
