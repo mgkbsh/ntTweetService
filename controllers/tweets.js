@@ -1,21 +1,33 @@
 var models  = require('../models');
 var sequelize = require('sequelize');
+var client = require('../config/redis')
 
 // TODO: Parse tweet content in background and insert into Hashtag and Mention.
 module.exports.tweet =  async (req, res) => {
   try {
     res.status(200).send('success');
 
-    await models.Tweet.create({
+    var user = req.body.user;
+
+    models.User.update(
+        { numTweets: sequelize.literal(`"Users"."numTweets" + 1`) },
+        { where: { id: user.id }
+    });
+
+    var tweet = await models.Tweet.create({
         content: req.body.content,
-        userId: req.body.userId,
+        userId: user.id,
         parentId: req.body.parentId
     });
 
-    await models.User.update(
-        { numTweets: sequelize.literal(`"Users"."numTweets" + 1`) },
-        { where: { id: req.body.userId }
-    });
+    tweet = JSON.parse(JSON.stringify(tweet))
+    tweet.user = user
+    string = JSON.stringify(tweet)
+
+    await client.lpushAsync('userTimeline:' + user.id, string)
+    await client.lpushAsync('globalTimeline', string)
+    client.ltrim('userTimeline' + user.id, 0, 49)
+    client.ltrim('globalTimeline', 0, 49)
 
   } catch (err) {
 

@@ -1,50 +1,7 @@
 var models  = require('../models');
 var sequelize = require('sequelize');
 var axios = require('axios')
-var env = process.env.NODE_ENV || 'development';
-var config = require('../config/config.json')[env]
-var cacheURL = config.cache_service
-
-// Get the tweets from the user, excluding retweets.
-// Example return JSON:
-// [
-//     {
-//         "content": "hi",
-//         "createdAt": "2018-04-06T03:09:38.593Z"
-//     },
-//     {
-//         "content": "yo",
-//         "createdAt": "2018-04-05T19:44:10.242Z"
-//     }
-// ]
-module.exports.getOriginalTimeline =  async (req, res) => {
-  console.log("ORIGINAL TIMELINE")
-  try {
-    console.log(cacheURL)
-    var id = req.body.id;
-    var userCacheKey="originalTimline"+id.toString();
-    var getRequestURL=cacheURL+userCacheKey
-    var postURL=cacheURL+'store/'+userCacheKey
-    var response=await axios.get(getRequestURL);
-    var result=JSON.parse(JSON.stringify(response.data))
-    if(result==null) {
-          var tweets = await models.Tweet.findAll({
-            order: [['createdAt', 'DESC']],
-            limit: 50,
-            where: { userId: id, originalId: null },
-            attributes: ['content', 'createdAt']
-          });
-          res.json(JSON.parse(JSON.stringify(tweets)));
-          axios.post(postURL, {params: { cacheKey: userCacheKey, cacheData: JSON.stringify(tweets)}})
-    } else {
-      res.json(JSON.parse(result));
-      // res.json(result)
-    }
-  } catch (err) {
-    res.status(404).send(err);
-  }
-}
-
+var client = require('../config/redis')
 
 // Get the tweets from the user, including retweets.
 // Example return JSON:
@@ -61,36 +18,38 @@ module.exports.getOriginalTimeline =  async (req, res) => {
 //     }
 // ]
 module.exports.getUserTimeline = async (req, res) => {
-  console.log("USER TIMELINE")
   try {
-    console.log("WOWOWOWO")
-    var id =5;
-    var userCacheKey="userTimeLine"+id.toString();
-    var getRequestURL=cacheURL+userCacheKey
-    var postURL=cacheURL+'store/'+userCacheKey
-    var response=await axios.get(getRequestURL);
-    var result=JSON.parse(JSON.stringify(response.data))
-    if(result==null) {
-          var tweets = await models.Tweet.findAll({
-            order: [['createdAt', 'DESC']],
-            limit: 50,
-            where: { userId: id },
-            include: [{
-              model: models.User,
-              as: 'user',
-              attributes: ['fname', 'lname', 'username']
-            }],
-            attributes: ['id', 'originalId', 'content', 'createdAt']
-          })
-          res.json(tweets);
-          axios.post(postURL, {params: { cacheKey: userCacheKey, cacheData: JSON.stringify(tweets)}})
-    } else {
-      res.json(JSON.parse(result));
+      var id = req.body.id;
+      var key = 'userTimeline:' + id
+
+      var tweets = await client.lrangeAsync(key, 0, -1)
+      if (tweets && tweets.length > 0) {
+        tweets = tweets.map(tweet => JSON.parse(tweet))
+
+        return res.json(tweets)
+      }
+
+      tweets = await models.Tweet.findAll({
+        order: [['createdAt', 'DESC']],
+        limit: 50,
+        where: { userId: id },
+        include: [{
+          model: models.User,
+          as: 'user',
+          attributes: ['id', 'username', 'fname', 'lname']
+        }],
+        attributes: ['id', 'content', 'createdAt', 'originalId']
+      });
+
+      res.json(tweets);
+
+      tweets.forEach(tweet => {
+        client.lpush(key, JSON.stringify(tweet))
+      })
+
+    } catch (err) {
+      console.log(err)
     }
-  } catch (err) {
-    console.log(err)
-    res.status(404).send(err);
-  }
 }
 
 // Get the most recent 50 tweets from the people that the user follows.
@@ -110,40 +69,31 @@ module.exports.getUserTimeline = async (req, res) => {
 // ]
 // TODO: Check Redis for home timeline of the user. If cache miss, use this query.
 module.exports.getFolloweeTimeline = async (req, res) => {
-  console.log("FOLLOWEE TIMELINE")
   try {
     var id = req.body.id;
-    var id = req.body.id;
-    var userCacheKey="followeeTimeline"+id.toString();
-    var getRequestURL=cacheURL+userCacheKey
-    var postURL=cacheURL+'store/'+userCacheKey
-    var response=await axios.get(getRequestURL);
-    var result=JSON.parse(JSON.stringify(response.data))
-    if(result==null) {
-      var tweets = await models.Tweet.findAll({
-        order: [['createdAt', 'DESC']],
-        limit: 50,
-        include: [{
-          model: models.User,
-          as: 'user',
-          attributes: ['id', 'username', 'fname', 'lname'],
-          where: {
-            id: {
-              $in: sequelize.literal(
-                `(SELECT  "followeeId" FROM "Relationships" WHERE "followerId"=${id})`)
-            }
+
+    var tweets = await models.Tweet.findAll({
+      order: [['createdAt', 'DESC']],
+      limit: 50,
+      include: [{
+        model: models.User,
+        as: 'user',
+        attributes: ['id', 'username', 'fname', 'lname'],
+        where: {
+          id: {
+            $in: sequelize.literal(
+              `(SELECT  "followeeId" FROM "Relationships" WHERE "followerId"=${id})`)
           }
-        }],
-        required: true,
-        attributes: ['content', 'createdAt']
-      });
-      res.json(tweets);
-      axios.post(postURL, {params: { cacheKey: userCacheKey, cacheData: JSON.stringify(tweets)}})
-    } else {
-      res.json(JSON.parse(result));
-    }
+        }
+      }],
+      required: true,
+      attributes: ['id', 'content', 'createdAt', 'originalId']
+    });
+
+    res.json(JSON.parse(JSON.stringify(tweets)));
+
   } catch (err) {
-    res.status(404).send(err);
+
   }
 };
 
@@ -165,7 +115,14 @@ module.exports.getFolloweeTimeline = async (req, res) => {
 // TODO: Retrieve global timeline from Redis.
 module.exports.getGlobalTimeline = async (req, res) => {
   try {
-    var tweets = await models.Tweet.findAll({
+    var key = 'globalTimeline'
+    var tweets = await client.lrangeAsync(key, 0, 49)
+
+    if (tweets && tweets.length > 0) {
+      return res.json(JSON.parse(JSON.stringify(tweets)))
+    }
+
+    tweets = await models.Tweet.findAll({
       order: [['createdAt', 'DESC']],
       limit: 50,
       include: [{
@@ -176,11 +133,11 @@ module.exports.getGlobalTimeline = async (req, res) => {
       attributes: ['id', 'content', 'createdAt', 'originalId']
     });
 
-    // res.json({})
-
     res.json(JSON.parse(JSON.stringify(tweets)));
 
+    tweets.forEach(tweet => client.lpush(key, JSON.stringify(tweet)))
+
   } catch (err) {
-    res.status(404).send(err);
+
   }
 };
