@@ -119,7 +119,8 @@ module.exports.getGlobalTimeline = async (req, res) => {
     var tweets = await client.lrangeAsync(key, 0, 49)
 
     if (tweets && tweets.length > 0) {
-      return res.json(JSON.parse(JSON.stringify(tweets)))
+      tweets = tweets.map(tweet => JSON.parse(tweet))
+      return res.json(tweets)
     }
 
     tweets = await models.Tweet.findAll({
@@ -138,6 +139,6 @@ module.exports.getGlobalTimeline = async (req, res) => {
     tweets.forEach(tweet => client.lpush(key, JSON.stringify(tweet)))
 
   } catch (err) {
-
+    console.log(err)
   }
 };
