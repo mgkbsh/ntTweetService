@@ -28,7 +28,7 @@ module.exports.tweet =  async (req, res) => {
         createdAt: new Date(Date.parse(new Date())),
     }
 
-    client.lpushAsync('writer', JSON.stringify(tweet))
+    // client.lpushAsync('writer', JSON.stringify(tweet))
     tweet.user = user
     var string = JSON.stringify(tweet)
     await client.lpushAsync('userTimeline:' + user.id, string)
