@@ -48,7 +48,6 @@ module.exports.getTweet =  async (req, res) => {
     res.json(tweet);
 
   } catch (err) {
-    res.status(404).send(err);
   }
 };
 
@@ -153,6 +152,5 @@ module.exports.getRetweets = async (req, res) => {
     res.json(JSON.parse(JSON.stringify(users)));
 
   } catch (err) {
-    res.status(404).send(err);
   }
 };

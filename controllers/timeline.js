@@ -41,7 +41,6 @@ module.exports.getOriginalTimeline =  async (req, res) => {
       // res.json(result)
     }
   } catch (err) {
-    res.status(404).send(err);
   }
 }
 
@@ -88,8 +87,7 @@ module.exports.getUserTimeline = async (req, res) => {
       res.json(JSON.parse(result));
     }
   } catch (err) {
-    console.log(err)
-    res.status(404).send(err);
+
   }
 }
 
@@ -143,7 +141,6 @@ module.exports.getFolloweeTimeline = async (req, res) => {
       res.json(JSON.parse(result));
     }
   } catch (err) {
-    res.status(404).send(err);
   }
 };
 
@@ -190,6 +187,6 @@ module.exports.getGlobalTimeline = async (req, res) => {
       res.json(JSON.parse(result))
     }
   } catch (err) {
-    res.status(404).send(err);
+
   }
 };
