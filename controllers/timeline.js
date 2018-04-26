@@ -29,7 +29,7 @@ module.exports.getOriginalTimeline =  async (req, res) => {
     if(result==null) {
           var tweets = await models.Tweet.findAll({
             order: [['createdAt', 'DESC']],
-            limit: 50,
+            limit: 25,
             where: { userId: id, originalId: null },
             attributes: ['content', 'createdAt']
           });
@@ -70,7 +70,7 @@ module.exports.getUserTimeline = async (req, res) => {
     if(result==null) {
           var tweets = await models.Tweet.findAll({
             order: [['createdAt', 'DESC']],
-            limit: 50,
+            limit: 25,
             where: { userId: id },
             include: [{
               model: models.User,
@@ -118,7 +118,7 @@ module.exports.getFolloweeTimeline = async (req, res) => {
     if(result==null) {
       var tweets = await models.Tweet.findAll({
         order: [['createdAt', 'DESC']],
-        limit: 50,
+        limit: 25,
         include: [{
           model: models.User,
           as: 'user',
@@ -170,7 +170,7 @@ module.exports.getGlobalTimeline = async (req, res) => {
     if(result==null) {
       var tweets = await models.Tweet.findAll({
         order: [['createdAt', 'DESC']],
-        limit: 50,
+        limit: 25,
         include: [{
           model: models.User,
           as: 'user',
