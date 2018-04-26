@@ -20,7 +20,6 @@ var cacheURL = config.cache_service
 module.exports.getOriginalTimeline =  async (req, res) => {
   console.log("ORIGINAL TIMELINE")
   try {
-    console.log(cacheURL)
     var id = req.body.id;
     var userCacheKey="originalTimline"+id.toString();
     var getRequestURL=cacheURL+userCacheKey
@@ -41,7 +40,6 @@ module.exports.getOriginalTimeline =  async (req, res) => {
       // res.json(result)
     }
   } catch (err) {
-    res.status(404).send(err);
   }
 }
 
@@ -63,8 +61,7 @@ module.exports.getOriginalTimeline =  async (req, res) => {
 module.exports.getUserTimeline = async (req, res) => {
   console.log("USER TIMELINE")
   try {
-    console.log("WOWOWOWO")
-    var id =5;
+    var id =req.body.id;
     var userCacheKey="userTimeLine"+id.toString();
     var getRequestURL=cacheURL+userCacheKey
     var postURL=cacheURL+'store/'+userCacheKey
@@ -88,8 +85,7 @@ module.exports.getUserTimeline = async (req, res) => {
       res.json(JSON.parse(result));
     }
   } catch (err) {
-    console.log(err)
-    res.status(404).send(err);
+
   }
 }
 
@@ -143,7 +139,6 @@ module.exports.getFolloweeTimeline = async (req, res) => {
       res.json(JSON.parse(result));
     }
   } catch (err) {
-    res.status(404).send(err);
   }
 };
 
@@ -181,6 +176,6 @@ module.exports.getGlobalTimeline = async (req, res) => {
     res.json(JSON.parse(JSON.stringify(tweets)));
 
   } catch (err) {
-    res.status(404).send(err);
+
   }
 };
