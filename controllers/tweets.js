@@ -32,7 +32,7 @@ module.exports.tweet =  async (req, res) => {
     tweet.user = user
     var string = JSON.stringify(tweet)
     await client.lpushAsync('userTimeline:' + user.id, string)
-    // await client.lpushAsync('globalTimeline', string)
+    await client.lpushAsync('globalTimeline', string)
     client.ltrim('userTimeline:' + user.id, 0, 49)
     client.ltrim('globalTimeline', 0, 49)
 

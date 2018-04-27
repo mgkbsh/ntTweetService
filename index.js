@@ -62,9 +62,7 @@ if (cluster.isMaster) {
   router.get('/timeline/followees', timeline.getFolloweeTimeline);
   router.get('/timeline/global', timeline.getGlobalTimeline);
   router.get('/timeline/user', timeline.getUserTimeline);
-  router.get('/test',function(req, res, next){
-    res.json({"test":"test"})
-  })
+
   app.use('/', router);
 
   app.listen(port);

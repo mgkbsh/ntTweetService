@@ -22,7 +22,7 @@ module.exports.getUserTimeline = async (req, res) => {
       var id = req.body.id;
       var key = 'userTimeline:' + id
 
-      var tweets = await client.lrangeAsync(key, 0, -1)
+      var tweets = await client.lrangeAsync(key, 0, 49)
       if (tweets && tweets.length > 0) {
         tweets = tweets.map(tweet => JSON.parse(tweet))
 
@@ -90,7 +90,7 @@ module.exports.getFolloweeTimeline = async (req, res) => {
       attributes: ['id', 'content', 'createdAt', 'originalId']
     });
 
-    res.json(JSON.parse(JSON.stringify(tweets)));
+    res.json(tweets);
 
   } catch (err) {
 
@@ -134,7 +134,7 @@ module.exports.getGlobalTimeline = async (req, res) => {
       attributes: ['id', 'content', 'createdAt', 'originalId']
     });
 
-    res.json(JSON.parse(JSON.stringify(tweets)));
+    res.json(tweets);
 
     tweets.forEach(tweet => client.lpush(key, JSON.stringify(tweet)))
 
