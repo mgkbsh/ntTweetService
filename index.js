@@ -16,6 +16,7 @@ if (cluster.isMaster) {
   // Code to run if we're in a worker process
 } else {
 
+  const async = require('async');
 
   var https = require('https');
   https.globalAgent.maxSockets = Infinity;
@@ -25,34 +26,44 @@ if (cluster.isMaster) {
   http.globalAgent.maxSockets = Infinity;
   app.http=http
 
-/* ===========BODY_PARSER=========== */
-const bodyParser = require('body-parser');
-// Parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
-// Parse application/json
-app.use(bodyParser.json());
-// Parse application/vnd.api+json as json
-app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
+  /* ===========BODY_PARSER=========== */
+  const bodyParser = require('body-parser');
 
-/* =============ROUTES============= */
-const tweets = require('./controllers/tweets')
-const timeline = require('./controllers/timeline')
-const router = express.Router();
+  function parallel(middlewares) {
+    return function (req, res, next) {
+      async.each(middlewares, function (mw, cb) {
+        mw(req, res, cb);
+      }, next);
+    };
+  }
 
-router.get('/tweet', tweets.getTweet);
-router.post('/tweet', tweets.tweet);
-router.get('/likes', tweets.getLikes);
-router.post('/like', tweets.like);
-router.post('/unlike', tweets.unlike);
-router.get('/retweets', tweets.getRetweets);
-router.post('/retweet', tweets.retweet);
-router.get('/timeline/followees', timeline.getFolloweeTimeline);
-router.get('/timeline/global', timeline.getGlobalTimeline);
-router.get('/timeline/user', timeline.getUserTimeline);
-router.get('/test',function(req, res, next){
-  res.json({"test":"test"})
-})
-app.use('/', router);
+  app.use(parallel([
+    // Parse application/x-www-form-urlencoded
+    bodyParser.urlencoded({ extended: false }),
+    // Parse application/json
+    bodyParser.json(),
+    // Parse application/vnd.api+json as json
+    bodyParser.json({ type: 'application/vnd.api+json' })
 
-app.listen(port);
+  ]));
+
+  /* =============ROUTES============= */
+  const tweets = require('./controllers/tweets')
+  const timeline = require('./controllers/timeline')
+  const router = express.Router();
+
+  router.get('/tweet', tweets.getTweet);
+  router.post('/tweet', tweets.tweet);
+  router.get('/likes', tweets.getLikes);
+  router.post('/like', tweets.like);
+  router.post('/unlike', tweets.unlike);
+  router.get('/retweets', tweets.getRetweets);
+  router.post('/retweet', tweets.retweet);
+  router.get('/timeline/followees', timeline.getFolloweeTimeline);
+  router.get('/timeline/global', timeline.getGlobalTimeline);
+  router.get('/timeline/user', timeline.getUserTimeline);
+
+  app.use('/', router);
+
+  app.listen(port);
 }
