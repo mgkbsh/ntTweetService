@@ -9,28 +9,21 @@ module.exports.tweet =  async (req, res) => {
 
     var user = req.body.user;
 
+    var tweet = await models.Tweet.create({
+       content: req.body.content,
+       userId: user.id,
+       parentId: req.body.parentId
+   });
 
-    // var tweet = await models.Tweet.create({
-    //     content: req.body.content,
-    //     userId: user.id,
-    //     parentId: req.body.parentId,
-    //     updatedAt: new Date(Date.parse(new Date())),
-    //     createdAt: new Date(Date.parse(new Date()))
-    // });
-    //
-    // console.log(tweet)
-
-    var tweet = {
-        content: req.body.content,
-        userId: user.id,
-        parentId: req.body.parentId,
-        updatedAt: new Date(Date.parse(new Date())),
-        createdAt: new Date(Date.parse(new Date())),
-    }
+   models.User.update(
+       { numTweets: sequelize.literal(`"Users"."numTweets" + 1`) },
+       { where: { id: user.id }
+   });
 
     // client.lpushAsync('writer', JSON.stringify(tweet))
     tweet.user = user
     var string = JSON.stringify(tweet)
+    client.rpush('writer', string)
     await client.lpushAsync('userTimeline:' + user.id, string)
     await client.lpushAsync('globalTimeline', string)
     client.ltrim('userTimeline:' + user.id, 0, 49)
@@ -75,6 +68,8 @@ module.exports.like = async (req, res) => {
   try {
     res.status(200).send('success');
 
+    console.log("liking")
+
     await models.Like.create({
       userId: req.body.userId,
       tweetId: req.body.tweetId
@@ -88,6 +83,8 @@ module.exports.like = async (req, res) => {
 module.exports.unlike = async (req, res) => {
   try {
     res.status(200).send('success');
+
+    console.log("unliking")
 
     await models.Like.destroy({
       userId: req.body.userId,
@@ -133,6 +130,8 @@ module.exports.getLikes = async (req, res) => {
 module.exports.retweet = async (req, res) => {
   try {
     res.status(200).send('success');
+
+    console.log("retweeting")
 
     await models.Tweet.create({
         content: "",
